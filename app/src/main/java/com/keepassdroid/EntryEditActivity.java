@@ -61,6 +61,19 @@ import com.keepassdroid.icons.Icons;
 import com.keepassdroid.utils.Types;
 import com.keepassdroid.utils.Util;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.VelocityTrackerCompat;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.View;
+
 public abstract class EntryEditActivity extends LockCloseHideActivity {
 	public static final String KEY_ENTRY = "entry";
 	public static final String KEY_PARENT = "parent";
@@ -72,6 +85,11 @@ public abstract class EntryEditActivity extends LockCloseHideActivity {
 	private boolean mShowPassword = false;
 	protected boolean mIsNew;
 	protected int mSelectedIconID = -1;
+
+	public static final String TAG = "EntryEditActivity";
+	private VelocityTracker mVelocityTracker = null;
+
+	public static final String FRAGTAG = "EntryEditGDFragment";
 	
 	public static void Launch(Activity act, PwEntry pw) {
 		Intent i;
@@ -117,7 +135,14 @@ public abstract class EntryEditActivity extends LockCloseHideActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entry_edit);
 		setResult(KeePass.EXIT_NORMAL);
-		
+
+		if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			EntryEditGDFragment fragment = new EntryEditGDFragment();
+			transaction.add(fragment, FRAGTAG);
+			transaction.commit();
+		}
+
 		// Likely the app has been killed exit the activity
 		Database db = App.getDB();
 		if ( ! db.Loaded() ) {
@@ -387,6 +412,105 @@ public abstract class EntryEditActivity extends LockCloseHideActivity {
 			}
 		}
 		
+	}
+
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		Log.i(TAG, "dispatchTouchEvent called");
+		int index = event.getActionIndex();
+		int action = event.getActionMasked();
+		int pointerId = event.getPointerId(index);
+		int historySize;
+		int pointerCount;
+
+		switch(action) {
+			case MotionEvent.ACTION_DOWN:
+				Log.i(TAG, "ACTION_DOWN at time = " + SystemClock.uptimeMillis());
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+				if(mVelocityTracker == null) {
+					// Retrieve a new VelocityTracker object to watch the velocity of a motion.
+					mVelocityTracker = VelocityTracker.obtain();
+				}
+				else {
+					// Reset the velocity tracker back to its initial state.
+					mVelocityTracker.clear();
+				}
+				// Add a user's movement to the tracker.
+				mVelocityTracker.addMovement(event);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				Log.i(TAG, "ACTION_MOVE at time = " + SystemClock.uptimeMillis());
+				mVelocityTracker.addMovement(event);
+				// When you want to determine the velocity, call
+				// computeCurrentVelocity(). Then call getXVelocity()
+				// and getYVelocity() to retrieve the velocity for each pointer ID.
+				mVelocityTracker.computeCurrentVelocity(1000);
+				// Log velocity of pixels per second
+				// Best practice to use VelocityTrackerCompat where possible.
+				Log.d("", "X velocity: " +
+						VelocityTrackerCompat.getXVelocity(mVelocityTracker,
+								pointerId));
+				Log.d("", "Y velocity: " +
+						VelocityTrackerCompat.getYVelocity(mVelocityTracker,
+								pointerId));
+
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+
+				break;
+			case MotionEvent.ACTION_UP:
+				Log.i(TAG, "ACTION_UP at time = " + SystemClock.uptimeMillis());
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+			case MotionEvent.ACTION_CANCEL:
+				// Return a VelocityTracker object back to be re-used by others.
+				mVelocityTracker.recycle();
+				mVelocityTracker=null;
+				break;
+		}
+		return super.dispatchTouchEvent(event);
 	}
 
 }

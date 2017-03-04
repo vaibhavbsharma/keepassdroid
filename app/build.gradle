@@ -2,12 +2,12 @@ apply plugin: 'com.android.model.application'
 
 model {
     android {
-        compileSdkVersion = 22
+        compileSdkVersion = 21
         buildToolsVersion = "23.0.0"
 
         defaultConfig.with {
             applicationId = "com.android.keepass"
-            minSdkVersion.apiLevel = 3
+            minSdkVersion.apiLevel = 9
             targetSdkVersion.apiLevel = 12
             versionCode = 154
             versionName = "2.0.6.4"
@@ -76,4 +76,5 @@ dependencies {
 
     compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile 'com.madgag.spongycastle:prov:1.54.0.0'
+	compile 'com.android.support:appcompat-v7:21.0.3'
 }
