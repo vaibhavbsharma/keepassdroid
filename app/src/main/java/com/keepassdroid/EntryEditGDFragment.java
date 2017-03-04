@@ -14,7 +14,8 @@ import com.android.keepass.R;
 public class EntryEditGDFragment extends Fragment {
     private final String ENTRYEDITACTIVITY="ENTRYEDITACTIVITY";
 
-    private final String ENTRYEDITACTIVITY_NEXT_BUTTON="ENTRYEDITACTIVITY_next_button";
+    private final String ENTRYEDITACTIVITY_SAVE_BUTTON="ENTRYEDITACTIVITY_save_button";
+    private final String ENTRYEDITACTIVITY_CANCEL_BUTTON="ENTRYEDITACTIVITY_cancel_button";
 
     public EntryEditGDFragment(){}
 
@@ -29,13 +30,11 @@ public class EntryEditGDFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         //View gV_ENTRYEDITACTIVITY = getActivity().findViewById(R.id.ENTRYEDITACTIVITY);
 
+        /*ENTRYEDITACTIVITY_SAVE_BUTTON*/
         View gV_next_button = getActivity().findViewById(R.id.entry_save);
         gV_next_button.setClickable(true);
         gV_next_button.setFocusable(true);
-
-
-        /*ENTRYEDITACTIVITY_NEXT_BUTTON*/
-        GestureDetector.SimpleOnGestureListener gL_next_button = new GestureListener(ENTRYEDITACTIVITY_NEXT_BUTTON);
+        GestureDetector.SimpleOnGestureListener gL_next_button = new GestureListener(ENTRYEDITACTIVITY_SAVE_BUTTON);
         final GestureDetector gD_next_button = new GestureDetector(getActivity(), gL_next_button);
         gV_next_button.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -45,7 +44,19 @@ public class EntryEditGDFragment extends Fragment {
             }
         });
 
-
+        /*ENTRYEDITACTIVITY_CANCEL_BUTTON*/
+        View gV_cancel_button = getActivity().findViewById(R.id.entry_cancel);
+        gV_cancel_button.setClickable(true);
+        gV_cancel_button.setFocusable(true);
+        GestureDetector.SimpleOnGestureListener gL_cancel_button = new GestureListener(ENTRYEDITACTIVITY_SAVE_BUTTON);
+        final GestureDetector gD_cancel_button = new GestureDetector(getActivity(), gL_cancel_button);
+        gV_cancel_button.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gD_cancel_button.onTouchEvent(motionEvent);
+                return false;
+            }
+        });
 
         // END_INCLUDE(init_detector)
     }
