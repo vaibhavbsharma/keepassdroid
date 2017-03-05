@@ -22,6 +22,8 @@ package com.keepassdroid;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -35,7 +37,11 @@ import com.keepassdroid.password.PasswordGenerator;
 
 public class GeneratePasswordActivity extends LockCloseActivity {
 	private static final int[] BUTTON_IDS = new int [] {R.id.btn_length6, R.id.btn_length8, R.id.btn_length12, R.id.btn_length16};
-	
+
+	public static final String TAG = "GeneratePasswordActivity";
+	private VelocityTracker mVelocityTracker = null;
+
+	public static final String FRAGTAG = "GeneratePasswordGDFragment";
 	public static void Launch(Activity act) {
 		Intent i = new Intent(act, GeneratePasswordActivity.class);
 		
@@ -96,6 +102,13 @@ public class GeneratePasswordActivity extends LockCloseActivity {
         
         // Pre-populate a password to possibly save the user a few clicks
         fillPassword();
+
+		if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			GeneratePasswordGDFragment fragment = new GeneratePasswordGDFragment();
+			transaction.add(fragment, FRAGTAG);
+			transaction.commit();
+		}
 	}
 	
 	private void fillPassword() {

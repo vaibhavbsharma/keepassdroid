@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -61,6 +62,7 @@ public abstract class GroupActivity extends GroupBaseActivity {
 	protected boolean readOnly = false;
 	
 	private static final String TAG = "Group Activity:";
+	public static final String FRAGTAG = "GroupGDFragment";
 	
 	public static void Launch(Activity act) {
 		Launch(act, null);
@@ -178,6 +180,13 @@ public abstract class GroupActivity extends GroupBaseActivity {
 		
 		if (isRoot) {
 			showWarnings();
+		}
+
+		if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			GroupGDFragment fragment = new GroupGDFragment();
+			transaction.add(fragment, FRAGTAG);
+			transaction.commit();
 		}
 	}
 

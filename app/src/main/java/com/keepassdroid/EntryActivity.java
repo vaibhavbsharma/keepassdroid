@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -99,6 +100,7 @@ public class EntryActivity extends LockCloseHideActivity {
 	
 	private DateFormat dateFormat;
 	private DateFormat timeFormat;
+	public static final String FRAGTAG = "EntryGDFragment";
 	
 	protected void setEntryView() {
 		setContentView(R.layout.entry_view);
@@ -297,10 +299,11 @@ public class EntryActivity extends LockCloseHideActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		
+		menu.clear();
+
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.entry, menu);
-		
+
 		MenuItem togglePassword = menu.findItem(R.id.menu_toggle_pass);
 		if ( mShowPassword ) {
 			togglePassword.setTitle(R.string.menu_hide_password);
@@ -334,7 +337,14 @@ public class EntryActivity extends LockCloseHideActivity {
 				copyPass.setVisible(false);
 			}
 		}
-		
+
+		if (getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			EntryGDFragment fragment = new EntryGDFragment();
+			transaction.add(fragment, FRAGTAG);
+			transaction.commit();
+		}
+
 		return true;
 	}
 	
