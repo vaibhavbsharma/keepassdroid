@@ -41,7 +41,7 @@ public class FileDbHelper {
 	private static final String FILE_TABLE = "files";
 	private static final int DATABASE_VERSION = 1;
 	
-	public static final int MAX_FILES = 5;
+	public static final int MAX_FILES = 7;
 	
 	public static final String KEY_FILE_ID = "_id";
 	public static final String KEY_FILE_FILENAME = "fileName";
