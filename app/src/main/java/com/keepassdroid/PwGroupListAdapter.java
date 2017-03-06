@@ -26,6 +26,8 @@ import java.util.List;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -141,6 +143,20 @@ public class PwGroupListAdapter extends BaseAdapter {
 			ev = (PwEntryView) convertView;
 			ev.convertView(entry, position);
 		}
+
+		String GROUPACTIVITY_entry_row="GROUPACTIVITY_entry_row";
+		View gV_add_entry = ev;
+		//gV_add_entry.setClickable(true);
+		//gV_add_entry.setFocusable(true);
+		GestureDetector.SimpleOnGestureListener gL_add_entry = new GestureListener(GROUPACTIVITY_entry_row);
+		final GestureDetector gD_add_entry = new GestureDetector(mAct, gL_add_entry);
+		gV_add_entry.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				gD_add_entry.onTouchEvent(motionEvent);
+				return false;
+			}
+		});
 
 		return ev;
 	}

@@ -22,6 +22,7 @@ package com.android.keepass;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.keepassdroid.fileselect.FileSelectActivity;
 
@@ -41,6 +42,7 @@ public class KeePass extends Activity {
 	protected void onStart() {
 		super.onStart();
 		startFileSelect();
+		Log.i("KeePass","Main activity onStart");
 	}
 
 	private void startFileSelect() {
@@ -51,6 +53,7 @@ public class KeePass extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		Log.i("KeePass","Main activity onDestroy");
 	}
 
 	@Override

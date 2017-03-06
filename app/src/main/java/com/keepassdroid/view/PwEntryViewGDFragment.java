@@ -1,4 +1,4 @@
-package com.keepassdroid;
+package com.keepassdroid.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,19 +8,19 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.keepass.R;
+import com.keepassdroid.GestureListener;
 
 /**
  * Created by vaibhav on 3/4/17.
  */
 
+public class PwEntryViewGDFragment extends Fragment {
 
-public class GroupGDFragment extends Fragment {
 
+    View ev;
     private final String GROUPACTIVITY_add_entry="GROUPACTIVITY_add_entry";
-    private final String GROUPACTIVITY_add_group="GROUPACTIVITY_add_group";
-    private final String GROUPACTIVITY_group_list="GROUPACTIVITY_group_list";
 
-    public GroupGDFragment(){}
+    public PwEntryViewGDFragment(View _ev){ev = _ev;}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class GroupGDFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         /*add_entry button*/
-        View gV_add_entry = getActivity().findViewById(R.id.add_entry);
+        View gV_add_entry = ev;
         gV_add_entry.setClickable(true);
         gV_add_entry.setFocusable(true);
         GestureDetector.SimpleOnGestureListener gL_add_entry = new GestureListener(GROUPACTIVITY_add_entry);
@@ -42,34 +42,6 @@ public class GroupGDFragment extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 gD_add_entry.onTouchEvent(motionEvent);
-                return false;
-            }
-        });
-
-        /*add_group button*/
-        View gV_add_group = getActivity().findViewById(R.id.add_group);
-        gV_add_group.setClickable(true);
-        gV_add_group.setFocusable(true);
-        GestureDetector.SimpleOnGestureListener gL_add_group = new GestureListener(GROUPACTIVITY_add_group);
-        final GestureDetector gD_add_group = new GestureDetector(getActivity(), gL_add_group);
-        gV_add_group.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gD_add_group.onTouchEvent(motionEvent);
-                return false;
-            }
-        });
-
-        /*group_list button*/
-        View gV_group_list = getActivity().findViewById(R.id.group_list);
-        gV_group_list.setClickable(true);
-        gV_group_list.setFocusable(true);
-        GestureDetector.SimpleOnGestureListener gL_group_list = new GestureListener(GROUPACTIVITY_group_list);
-        final GestureDetector gD_group_list = new GestureDetector(getActivity(), gL_group_list);
-        gV_group_list.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                gD_group_list.onTouchEvent(motionEvent);
                 return false;
             }
         });

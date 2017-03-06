@@ -28,12 +28,18 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.view.VelocityTrackerCompat;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -49,6 +55,7 @@ import android.widget.Toast;
 
 import com.android.keepass.R;
 import com.keepassdroid.AboutDialog;
+import com.keepassdroid.GestureListener;
 import com.keepassdroid.GroupActivity;
 import com.keepassdroid.PasswordActivity;
 import com.keepassdroid.ProgressTask;
@@ -87,9 +94,13 @@ public class FileSelectActivity extends Activity {
 
 	private boolean recentMode = false;
 
+	public static final String TAG = "FileSelectActivity";
+	private VelocityTracker mVelocityTracker = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("FileSelectActivity","FileSelectActivity::onStart called");
 		
 		fileHistory = App.getFileHistory();
 
@@ -329,6 +340,8 @@ public class FileSelectActivity extends Activity {
 		
 		mAdapter = new ArrayAdapter<String>(this, R.layout.file_row, R.id.file_filename, fileHistory.getDbList());
 		mList.setAdapter(mAdapter);
+		((BaseAdapter) mAdapter).notifyDataSetChanged();
+
 	}
 
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -344,6 +357,7 @@ public class FileSelectActivity extends Activity {
 			}
 			
 			protected void onPostExecute(Void v) {
+				Log.i("FileSelectActivity","FileSelectActivity::onPostExecute opening file "+fileName);
 				try {
 					PasswordActivity.Launch(FileSelectActivity.this, fileName, keyFile);
 				}
@@ -408,7 +422,10 @@ public class FileSelectActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+		Log.i("FileSelectActivity","FileSelectActivity::onResume called abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+
+		((BaseAdapter) mAdapter).notifyDataSetChanged();
+
 		// Check to see if we need to change modes
 		if ( fileHistory.hasRecentFiles() != recentMode ) {
 			// Restart the activity
@@ -419,6 +436,59 @@ public class FileSelectActivity extends Activity {
 		
 		FileNameView fnv = (FileNameView) findViewById(R.id.file_select);
 		fnv.updateExternalStorageWarning();
+
+		// http://stackoverflow.com/questions/24811536/android-listview-get-item-view-by-position
+		final int firstListItemPosition = mList.getFirstVisiblePosition();
+		final int lastListItemPosition = firstListItemPosition + mList.getChildCount() - 1;
+
+		for(int pos=firstListItemPosition; pos<= lastListItemPosition; pos++) {
+			final int childIndex = pos - firstListItemPosition;
+			View ev = mList.getChildAt(childIndex);
+			String FILESELECTACTIVITY_entry_row="FILESELECTACTIVITY_entry_row";
+			View gV_add_entry = ev;
+			//gV_add_entry.setClickable(true);
+			//gV_add_entry.setFocusable(true);
+			GestureDetector.SimpleOnGestureListener gL_add_entry = new GestureListener(FILESELECTACTIVITY_entry_row);
+			final GestureDetector gD_add_entry = new GestureDetector(this, gL_add_entry);
+			gV_add_entry.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View view, MotionEvent motionEvent) {
+					gD_add_entry.onTouchEvent(motionEvent);
+					return false;
+				}
+			});
+		}
+		mList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+			@Override
+			public void onLayoutChange(View ev, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+				mList.removeOnLayoutChangeListener(this);
+				String FILESELECTACTIVITY_entry_row="FILESELECTACTIVITY_entry_row";
+				final int firstListItemPosition = mList.getFirstVisiblePosition();
+				final int lastListItemPosition = firstListItemPosition + mList.getChildCount() - 1;
+
+				for(int pos=firstListItemPosition; pos<= lastListItemPosition; pos++) {
+
+					View gV_add_entry = mList.getChildAt(pos);
+					//gV_add_entry.setClickable(true);
+					//gV_add_entry.setFocusable(true);
+					GestureDetector.SimpleOnGestureListener gL_add_entry = new GestureListener(FILESELECTACTIVITY_entry_row);
+					final GestureDetector gD_add_entry = new GestureDetector(mList.getContext(), gL_add_entry);
+					gV_add_entry.setOnTouchListener(new View.OnTouchListener() {
+						@Override
+						public boolean onTouch(View view, MotionEvent motionEvent) {
+							gD_add_entry.onTouchEvent(motionEvent);
+							return false;
+						}
+					});
+				}
+			}
+		});
+	}
+
+	protected void onPause() {
+		Log.i("FileSelectActivity","FileSelectActivity::onPause called zyxwvutsrqponmlkjihgfedcbazyxwvutsrqponmlkjihgfedcbazyxwvutsrqponmlkjihgfedcba");
+		super.onPause();
+
 	}
 
 	@Override
@@ -427,6 +497,28 @@ public class FileSelectActivity extends Activity {
 		
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.fileselect, menu);
+
+		// http://stackoverflow.com/questions/24811536/android-listview-get-item-view-by-position
+		final int firstListItemPosition = mList.getFirstVisiblePosition();
+		final int lastListItemPosition = firstListItemPosition + mList.getChildCount() - 1;
+
+		for(int pos=firstListItemPosition; pos<= lastListItemPosition; pos++) {
+			final int childIndex = pos - firstListItemPosition;
+			View ev = mList.getChildAt(childIndex);
+			String FILESELECTACTIVITY_entry_row="FILESELECTACTIVITY_entry_row";
+			View gV_add_entry = ev;
+			//gV_add_entry.setClickable(true);
+			//gV_add_entry.setFocusable(true);
+			GestureDetector.SimpleOnGestureListener gL_add_entry = new GestureListener(FILESELECTACTIVITY_entry_row);
+			final GestureDetector gD_add_entry = new GestureDetector(this, gL_add_entry);
+			gV_add_entry.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View view, MotionEvent motionEvent) {
+					gD_add_entry.onTouchEvent(motionEvent);
+					return false;
+				}
+			});
+		}
 
 		return true;
 	}
@@ -463,6 +555,7 @@ public class FileSelectActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
 		menu.add(0, CMENU_CLEAR, 0, R.string.remove_from_filelist);
+
 	}
 
 	@Override
@@ -493,6 +586,105 @@ public class FileSelectActivity extends Activity {
 	
 	private void refreshList() {
 		((BaseAdapter) mAdapter).notifyDataSetChanged();
+	}
+
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		Log.i(TAG, "dispatchTouchEvent called");
+		int index = event.getActionIndex();
+		int action = event.getActionMasked();
+		int pointerId = event.getPointerId(index);
+		int historySize;
+		int pointerCount;
+
+		switch(action) {
+			case MotionEvent.ACTION_DOWN:
+				Log.i(TAG, "ACTION_DOWN at time = " + SystemClock.uptimeMillis());
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+				if(mVelocityTracker == null) {
+					// Retrieve a new VelocityTracker object to watch the velocity of a motion.
+					mVelocityTracker = VelocityTracker.obtain();
+				}
+				else {
+					// Reset the velocity tracker back to its initial state.
+					mVelocityTracker.clear();
+				}
+				// Add a user's movement to the tracker.
+				mVelocityTracker.addMovement(event);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				Log.i(TAG, "ACTION_MOVE at time = " + SystemClock.uptimeMillis());
+				mVelocityTracker.addMovement(event);
+				// When you want to determine the velocity, call
+				// computeCurrentVelocity(). Then call getXVelocity()
+				// and getYVelocity() to retrieve the velocity for each pointer ID.
+				mVelocityTracker.computeCurrentVelocity(1000);
+				// Log velocity of pixels per second
+				// Best practice to use VelocityTrackerCompat where possible.
+				Log.d("", "X velocity: " +
+						VelocityTrackerCompat.getXVelocity(mVelocityTracker,
+								pointerId));
+				Log.d("", "Y velocity: " +
+						VelocityTrackerCompat.getYVelocity(mVelocityTracker,
+								pointerId));
+
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+
+				break;
+			case MotionEvent.ACTION_UP:
+				Log.i(TAG, "ACTION_UP at time = " + SystemClock.uptimeMillis());
+				historySize = event.getHistorySize();
+				pointerCount = event.getPointerCount();
+				for (int h = 0; h < historySize; h++) {
+					System.out.printf("At time %d:", event.getHistoricalEventTime(h));
+					for (int p = 0; p < pointerCount; p++) {
+						Log.i(TAG, "  pointer " +
+								event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+								" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+					}
+				}
+				Log.i(TAG, "At time " + event.getEventTime());
+				for (int p = 0; p < pointerCount; p++) {
+					Log.i(TAG, "  pointer " +
+							event.getPointerId(p) + " " + event.getX(p) + " " + event.getY(p) +
+							" " + event.getPressure(p) + " " + event.getOrientation(p) +" "+event.getSize());
+				}
+			case MotionEvent.ACTION_CANCEL:
+				// Return a VelocityTracker object back to be re-used by others.
+				mVelocityTracker.recycle();
+				mVelocityTracker=null;
+				break;
+		}
+		return super.dispatchTouchEvent(event);
 	}
 
 }

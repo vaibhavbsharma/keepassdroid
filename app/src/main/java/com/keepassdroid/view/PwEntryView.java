@@ -21,17 +21,22 @@ package com.keepassdroid.view;
 
 
 import android.os.Handler;
+import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.keepass.R;
 import com.keepassdroid.EntryActivity;
+import com.keepassdroid.GestureListener;
 import com.keepassdroid.GroupBaseActivity;
+import com.keepassdroid.GroupGDFragment;
 import com.keepassdroid.ProgressTask;
 import com.keepassdroid.app.App;
 import com.keepassdroid.database.PwEntry;
@@ -47,6 +52,7 @@ public class PwEntryView extends ClickView {
 	
 	protected static final int MENU_OPEN = Menu.FIRST;
 	private static final int MENU_DELETE = MENU_OPEN + 1;
+	public static final String FRAGTAG = "PwEntryViewGDFragment";
 	
 	public static PwEntryView getInstance(GroupBaseActivity act, PwEntry pw, int pos) {
 		return new PwEntryView(act, pw, pos);
@@ -66,8 +72,15 @@ public class PwEntryView extends ClickView {
 		
 		addView(ev, lp);
 
+//		if (mAct.getSupportFragmentManager().findFragmentByTag(FRAGTAG) == null ) {
+//			FragmentTransaction transaction = mAct.getSupportFragmentManager().beginTransaction();
+//			PwEntryViewGDFragment fragment = new PwEntryViewGDFragment(ev);
+//			transaction.add(fragment, FRAGTAG);
+//			transaction.commit();
+//		}
+
 	}
-	
+
 	private void populateView(View ev, PwEntry pw, int pos) {
 		mPw = pw;
 		mPos = pos;

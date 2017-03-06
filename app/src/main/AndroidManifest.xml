@@ -29,7 +29,7 @@
             android:theme="@style/NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden"
         />
         <activity android:name="com.keepassdroid.PasswordActivity" android:configChanges="orientation|keyboardHidden"
-            android:theme="@style/NoTitleBar">
+            android:theme="@style/NoTitleBar" android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
